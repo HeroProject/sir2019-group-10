@@ -5,23 +5,24 @@ import random
 import time
 import sys
 
+
+
 class DialogFlowSampleApplication(Base.AbstractApplication):
+
     def __init__(self):
+        # init variables
+        self.language = 'en-US'
+        self.dialogKey = 'agentsmith-ljpfky-b35f1421d237.json'
+        self.dialogAgent = 'agentsmith-ljpfky'
+
         # in-game variables
         self.noAnswer = True
         self.repeat = 0
 
-        # language variables
-        self.langLock = Semaphore(0)
-        self.setLanguage('en-US')
-        self.langLock.acquire()
-
-        # Dialogflow variables (add your Dialogflow parameters)
-        self.setDialogflowKey('agentsmith-ljpfky-b35f1421d237.json')
-        self.setDialogflowAgent('agentsmith-ljpfky')
-
+        # robot settings
+        self.setEyeColour("")
         # responses variables
-        self.responses = ["Sorry, I didn't catched that. Can you repeat it loud and clear for me?",
+        self.responses = ["Sorry, I didn't catch that. Can you repeat it loud and clear for me?",
                           "I think I'm getting a bit old. Could you repeat what you said?",
                           "Sorry, I didn't heard you well. Please repeat it one more time?",
                           "I'm having trouble hearing you. Can you say itone more time?",
@@ -36,7 +37,22 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.noAnswer = True
         self.repeat = 0
 
+
+    def initialization(self, language, diagKey, diagAgent):
+
+        # language variables
+        self.langLock = Semaphore(0)
+        self.setLanguage(language)
+        self.langLock.acquire()
+
+        # Dialogflow variables (add your Dialogflow parameters)
+        self.setDialogflowKey(diagKey)
+        self.setDialogflowAgent(diagAgent)
+
+
     def main(self):
+        # Initialization of DiaglogFlow and NAO language.
+        self.initialization(self.language, self.dialogKey, self.dialogAgent)
 
         self.act1()
         self.act2()
@@ -258,7 +274,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.gamemove = None
             self.number = None
             self.gamemoveLock = Semaphore(0)
-            self.setAudioContext('answer_play')
+            self.setAudioContext('answer_gamemove')
             self.startListening()
             self.gamemoveLock.acquire(timeout=7)
             self.stopListening()
