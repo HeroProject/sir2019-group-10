@@ -40,11 +40,11 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.setDialogflowKey('agentsmith-ljpfky-b35f1421d237.json')
         self.setDialogflowAgent('agentsmith-ljpfky')
 
-        # self.act1()
+        self.act1()
         # self.act2()
         # self.act3()
         # self.act4()
-        self.act5()
+        # self.act5()
         # self.act6()
 
     def onRobotEvent(self, event):
@@ -92,7 +92,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated('Good morning {}. How are you feeling today?'.format(self.name))
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times == 3:
+        while self.noAnswer and self.times != 3:
 
             self.mood = None
             self.moodLock = Semaphore(0)
@@ -123,13 +123,16 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.times += 1
             self.speechLock.acquire()
 
-        # if self.noAnswer = False:
-        #     # TODO do a happy gesture
-        # else:
-        #     # Display a gesture (replace <gestureID> with your gestureID)
-        #     self.gestureLock = Semaphore(0)
-        #     self.doGesture('<gestureID>/behavior_1') # TODO add animation
-        #     self.gestureLock.acquire()
+        if self.noAnswer == False:
+            # Display a gesture (replace <gestureID> with your gestureID)
+            self.gestureLock = Semaphore(0)
+            self.doGesture('Excited_3') # TODO add animation
+            self.gestureLock.acquire()
+        else:
+            # Display a gesture (replace <gestureID> with your gestureID)
+            self.gestureLock = Semaphore(0)
+            self.doGesture('Angry_4') # TODO add animation
+            self.gestureLock.acquire()
         time.sleep(1)
 
     # Do you want to play with me?
@@ -139,7 +142,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated("Before we start the day, let's play a little game together.")
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times == 3:
+        while self.noAnswer and self.times != 3:
             self.play = None
             self.playLock = Semaphore(0)
             self.setAudioContext('answer_play')
@@ -179,7 +182,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated("What kind of game would you like to play?")
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times == 3:
+        while self.noAnswer and self.times != 3:
             self.game = None
             self.gameLock = Semaphore(0)
             self.setAudioContext('answer_game')
@@ -218,7 +221,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times == 3:
+        while self.noAnswer and self.times != 3:
             self.yesno = None
             self.yesnoLock = Semaphore(0)
             self.setAudioContext('answer_yesno')
@@ -256,7 +259,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated("Remember {} the goal of the game is to place the numbers in the right order.".format(self.name))
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times == 3:
+        while self.noAnswer and self.times != 3:
 
             if self.repeat > 0:
                 self.speechLock = Semaphore(0)
