@@ -5,62 +5,48 @@ import random
 import time
 import sys
 
-
-
 class DialogFlowSampleApplication(Base.AbstractApplication):
-
-    def __init__(self):
-        # init variables
-        self.language = 'en-US'
-        self.dialogKey = 'agentsmith-ljpfky-b35f1421d237.json'
-        self.dialogAgent = 'agentsmith-ljpfky'
-
-        # in-game variables
-        self.noAnswer = True
-        self.repeat = 0
-
-        # robot settings
-        self.setEyeColour("")
-        # responses variables
-        self.responses = ["Sorry, I didn't catch that. Can you repeat it loud and clear for me?",
-                          "I think I'm getting a bit old. Could you repeat what you said?",
-                          "Sorry, I didn't heard you well. Please repeat it one more time?",
-                          "I'm having trouble hearing you. Can you say itone more time?",
-                          "Sorry, I wasn't paying attention. Can you repeat it?"]
-
-        self.userExperience = {22: "On twenty two of July is your birthday!",
-                               64: "On your next birthday, you will be 18 years old with 46 years of experience!"
-                               }
-
+    
     def reset(self):
         self.times = 0
         self.noAnswer = True
         self.repeat = 0
-
-
-    def initialization(self, language, diagKey, diagAgent):
-
-        # language variables
-        self.langLock = Semaphore(0)
-        self.setLanguage(language)
-        self.langLock.acquire()
-
-        # Dialogflow variables (add your Dialogflow parameters)
-        self.setDialogflowKey(diagKey)
-        self.setDialogflowAgent(diagAgent)
-
-
+    
     def main(self):
-        # Initialization of DiaglogFlow and NAO language.
-        self.initialization(self.language, self.dialogKey, self.dialogAgent)
-
-        self.act1()
-        self.act2()
-        self.act3()
-        self.act4()
+        
+        # in-game variables
+        self.noAnswer = True
+        self.repeat = 0
+        self.name = "Granny"
+        self.setEyeColour("red")
+        
+        # responses variables
+        self.responses = ["Sorry, I didn't catched that. Can you repeat it loud and clear for me?",
+                          "I think I'm getting a bit old. Could you repeat what you said?",
+                          "Sorry, I didn't heard you well. Please repeat it one more time?",
+                          "I'm having trouble hearing you. Can you say itone more time?",
+                          "Sorry, I wasn't paying attention. Can you repeat it?"]
+            
+                          self.userExperience = {22: "On twenty two of July is your birthday!",
+                              64: "On your next birthday, you will be 18 years old with 46 years of experience!"
+                              }
+                          
+                          # language variables
+                          self.langLock = Semaphore(0)
+    self.setLanguage('en-US')
+    self.langLock.acquire()
+    
+    # Dialogflow variables (add your Dialogflow parameters)
+    self.setDialogflowKey('agentsmith-ljpfky-b35f1421d237.json')
+        self.setDialogflowAgent('agentsmith-ljpfky')
+        
+        # self.act1()
+        # self.act2()
+        # self.act3()
+        # self.act4()
         self.act5()
-        self.act6()
-
+    # self.act6()
+    
     def onRobotEvent(self, event):
         if event == 'LanguageChanged':
             self.langLock.release()
@@ -69,19 +55,19 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         elif event == 'GestureDone':
             self.gestureLock.release()
 
-    def onAudioIntent(self, *args, intentName):
-        if intentName == 'answer_name' and len(args) > 0:
-            self.name = args[0]
-            self.nameLock.release()
+def onAudioIntent(self, *args, intentName):
+    if intentName == 'answer_name' and len(args) > 0:
+        self.name = args[0]
+        self.nameLock.release()
         elif intentName == 'answer_mood' and len(args) > 0:
             self.mood = args[0]
             self.moodLock.release()
         elif intentName == 'answer_play' and len(args) > 0:
             self.play = args[0]
             self.playLock.release()
-        elif intentName == 'answer_yesno' and len(args) > 0:
-            self.yesno = args[0]
-            self.yesnoLock.release()
+    elif intentName == 'answer_yesno' and len(args) > 0:
+        self.yesno = args[0]
+        self.yesnoLock.release()
         elif intentName == 'answer_gamemove' and len(args) > 0:
             # TODO check here if the args is getting more variables
             self.gamemove = args[0]
@@ -91,33 +77,33 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         elif intentName == 'answer_game' and len(args) > 0:
             self.game = args[0]
             self.gameLock.release()
-        elif intentName == 'answer_finish' and len(args) > 0:
-            self.finish = args[0]
-            self.finishLock.release()
-            # TODO add all instances here
-
+elif intentName == 'answer_finish' and len(args) > 0:
+    self.finish = args[0]
+    self.finishLock.release()
+    # TODO add all instances here
+    
     def exit(self):
         sys.exit('Emergency exit')
-
+    
     # Good morning
     def act1(self):
         self.reset()  # reset the variables
         self.speechLock = Semaphore(0)
         self.sayAnimated('Good morning {}. How are you feeling today?'.format(self.name))
         self.speechLock.acquire()
-
+        
         while self.noAnswer or self.times == 3:
-
+            
             self.mood = None
             self.moodLock = Semaphore(0)
             self.setAudioContext('answer_mood')
             self.startListening()
             self.moodLock.acquire(timeout=5)
             self.stopListening()
-
+            
             if not self.mood:  # wait one more second after stopListening (if needed)
                 self.moodLock.acquire(timeout=1)
-
+            
             # Respond and wait for that to finish
             if self.mood == "good":
                 self.sayAnimated("I am happy to hear that your are doing {}".format(self.mood))
@@ -137,62 +123,62 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.times += 1
             self.speechLock.acquire()
 
-        # if self.noAnswer = False:
-        #     # TODO do a happy gesture
-        # else:
-        #     # Display a gesture (replace <gestureID> with your gestureID)
-        #     self.gestureLock = Semaphore(0)
-        #     self.doGesture('<gestureID>/behavior_1') # TODO add animation
-        #     self.gestureLock.acquire()
-        time.sleep(1)
+    # if self.noAnswer = False:
+    #     # TODO do a happy gesture
+    # else:
+    #     # Display a gesture (replace <gestureID> with your gestureID)
+    #     self.gestureLock = Semaphore(0)
+    #     self.doGesture('<gestureID>/behavior_1') # TODO add animation
+    #     self.gestureLock.acquire()
+    time.sleep(1)
 
-    # Do you want to play with me?
-    def act2(self):
-        self.reset()  # reset the variables
-        self.speechLock = Semaphore(0)
-        self.sayAnimated("Before we start the day, let's play a little game together.")
-        self.speechLock.acquire()
-
-        while self.noAnswer or self.times == 3:
-            self.play = None
+# Do you want to play with me?
+def act2(self):
+    self.reset()  # reset the variables
+    self.speechLock = Semaphore(0)
+    self.sayAnimated("Before we start the day, let's play a little game together.")
+    self.speechLock.acquire()
+    
+    while self.noAnswer or self.times == 3:
+        self.play = None
             self.playLock = Semaphore(0)
             self.setAudioContext('answer_play')
             self.startListening()
             self.playLock.acquire(timeout=5)
             self.stopListening()
-
+            
             if not self.play:  # wait one more second after stopListening (if needed)
                 self.playLock.acquire(timeout=1)
-
-            # Respond and wait for that to finish
-            if self.play == "yes":
-                self.sayAnimated("I like your enthusiasm, {}".format(self.name))
-                self.noAnswer = False
+    
+        # Respond and wait for that to finish
+        if self.play == "yes":
+            self.sayAnimated("I like your enthusiasm, {}".format(self.name))
+            self.noAnswer = False
             elif self.play == "no":
                 self.sayAnimated("We don't want to miss this practice session, {}. This will help you. "
                                  "Let's play it!".format(self.name))
                 self.noAnswer = False
-            else:
-                if self.times == 2:
-                    self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
-                                     "next point")
-                    self.times += 1
-                else:
-                    self.sayAnimated(random.choice(self.responses))
-                    self.times += 1
+        else:
+            if self.times == 2:
+                self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
+                                 "next point")
+                                 self.times += 1
+                                 else:
+                                     self.sayAnimated(random.choice(self.responses))
+                                     self.times += 1
             self.speechLock.acquire()
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
-
+# Display a gesture (replace <gestureID> with your gestureID)
+time.sleep(1)
+    
     # Choosing the game
     def act3(self):
         self.reset()  # reset the variables
-
+        
         self.speechLock = Semaphore(0)
         self.sayAnimated("What kind of game would you like to play?")
         self.speechLock.acquire()
-
+        
         while self.noAnswer or self.times == 3:
             self.game = None
             self.gameLock = Semaphore(0)
@@ -200,10 +186,10 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.startListening()
             self.gameLock.acquire(timeout=5)
             self.stopListening()
-
+            
             if not self.game:  # wait one more second after stopListening (if needed)
                 self.gameLock.acquire(timeout=1)
-
+            print(self.game)
             # Respond and wait for that to finish
             if self.game == "numbers" or self.game == "random":
                 self.sayAnimated("Let's play that, {}".format(self.name))
@@ -221,56 +207,62 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.times += 1
             self.speechLock.acquire()
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
+    # Display a gesture (replace <gestureID> with your gestureID)
+    time.sleep(1)
 
-    # Start the game
-    def act4(self):
-        # TODO add a listener here so we can pick the yes
-        # not sure what speechLock is
-        self.reset()
-        self.speechLock = Semaphore(0)
-        self.speechLock.acquire()
-
-        while self.noAnswer or self.times == 3:
-            self.yesno = None
+# Start the game
+def act4(self):
+    # TODO add a listener here so we can pick the yes
+    # not sure what speechLock is
+    self.reset()
+    self.speechLock = Semaphore(0)
+    self.speechLock.acquire()
+    
+    while self.noAnswer or self.times == 3:
+        self.yesno = None
             self.yesnoLock = Semaphore(0)
             self.setAudioContext('answer_yesno')
             self.startListening()
             self.yesnoLock.acquire(timeout=5)
             self.stopListening()
-
+            
             if not self.yesno:  # wait one more second after stopListening (if needed)
                 self.yesnoLock.acquire(timeout=1)
-
-            # Respond and wait for that to finish
-            if self.yesno == "yes":
-                self.sayAnimated("Great, let's start, {}!".format(self.name))
-                self.noAnswer = False
+    
+        # Respond and wait for that to finish
+        if self.yesno == "yes":
+            self.sayAnimated("Great, let's start, {}!".format(self.name))
+            self.noAnswer = False
             elif self.yesno == "no": # i don't know answer
                 self.sayAnimated("We need to play it either way.")
                 self.noAnswer = False
-            else:
-                if self.times == 2:
-                    self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
-                                     "next point")
-                    self.times += 1
-                else:
-                    self.sayAnimated(random.choice(self.responses))
-                    self.times += 1
+        else:
+            if self.times == 2:
+                self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
+                                 "next point")
+                                 self.times += 1
+                                 else:
+                                     self.sayAnimated(random.choice(self.responses))
+                                     self.times += 1
             self.speechLock.acquire()
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
-
+# Display a gesture (replace <gestureID> with your gestureID)
+time.sleep(1)
+    
     # Moves, ordering, etc...
     def act5(self):
         self.reset()
         self.speechLock = Semaphore(0)
         self.sayAnimated("Remember {} the goal of the game is to place the numbers in the right order.".format(self.name))
         self.speechLock.acquire()
-
+        
         while self.noAnswer or self.times == 3:
+            
+            if self.repeat > 0:
+                self.speechLock = Semaphore(0)
+                self.sayAnimated("Let's make another move.".format(self.name))
+                self.speechLock.acquire()
+        
             self.gamemove = None
             self.number = None
             self.gamemoveLock = Semaphore(0)
@@ -278,90 +270,91 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.startListening()
             self.gamemoveLock.acquire(timeout=7)
             self.stopListening()
-
+            
             if not self.gamemove:  # wait one more second after stopListening (if needed)
                 self.gamemoveLock.acquire(timeout=1)
-
-            # Respond and wait for that to finish
-            if self.gamemove == "correct":
-                self.sayAnimated("Yes, {}. You are doing great!".format(self.name))
-                time.sleep(1)
-                self.sayAnimated("Let's make another move.")
-                if self.repeat == 2:
-                    self.noAnswer = True
+    
+    print("Favourite number {}".format(self.number))
+        print("Nr. of times the robot didn't understood {}".format(self.times))
+        print("Nr of moves {}".format(self.repeat))
+        # Respond and wait for that to finish
+        if self.gamemove == "correct":
+            self.sayAnimated("Yes, {}. You are doing great!".format(self.name))
+            if self.repeat == 2:
+                self.noAnswer = False
                 else:
                     self.repeat += 1
-            elif self.gamemove == "uncertain":
-                self.sayAnimated("That is not completely correct, {}. Take a look at number {} and see if that is "
-                                 "bigger with the number you have chosen.".format(self.name, np.random.randint(0, 100, 1)))
-                time.sleep(1)
-                if self.number is not None:
-                    self.sayAnimated("By the way, {}".format(self.userExperience[self.number]))
-                if self.repeat == 2:
-                    self.noAnswer = True
-                else:
-                    self.repeat += 1
-            elif self.gamemove == "wrong":
-                self.sayAnimated("That is not correct, {}. Try something else.".format(self.name))
-                # TODO add an encouragment here
-                if self.repeat == 2:
-                    self.noAnswer = True
-                else:
-                    self.repeat += 1
-            else:
-                if self.times == 2:
-                    self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
-                                     "next point")
-                    self.times += 1
-                else:
-                    self.sayAnimated(random.choice(self.responses))
-                    self.times += 1
-            self.speechLock.acquire()
+        elif self.gamemove == "uncertain":
+            self.sayAnimated("That is not completely correct, {}. Take a look at number {} and see if that is "
+                             "bigger with the number you have chosen.".format(self.name, np.random.randint(0, 100, 1)))
+                             time.sleep(1)
+                                 if self.number is not None:
+                                     self.sayAnimated("By the way, {}".format(str(self.userExperience[int(self.number)])))
+                                         if self.repeat == 2:
+                                             self.noAnswer = False
+                                                 else:
+                                                     self.repeat += 1
+                                                 elif self.gamemove == "wrong":
+                                                     self.sayAnimated("That is not correct, {}. Try something else.".format(self.name))
+                                                     # TODO add an encouragment here
+                                                     if self.repeat == 2:
+                                                         self.noAnswer = False
+                                                             else:
+                                                                 self.repeat += 1
+                                                                     else:
+                                                                         if self.times == 2:
+                                                                             self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
+                                                                                              "next point")
+                                                                             self.times += 1
+                                                                                 else:
+                                                                                     self.sayAnimated(random.choice(self.responses))
+                                                                                     self.times += 1
+                                                                                         self.speechLock.acquire()
+                                                                                         time.sleep(1)
+                                                                                             
+                                                                                             # Display a gesture (replace <gestureID> with your gestureID)
+                                                                                             time.sleep(2)
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
-
-    # Congratulations, it's time to say goodbye.
-    def act6(self):
-        self.reset()
-        self.speechLock = Semaphore(0)
-        self.sayAnimated("I'm fast forwarding to the end of the game.".format(self.name))
-        time.sleep(2)
-        self.sayAnimated("Congratulations {}, you finished the game and you did a good job.".format(self.name))
-        self.speechLock.acquire()
-
-        while self.noAnswer or self.times == 3:
-            self.finish = None
+# Congratulations, it's time to say goodbye.
+def act6(self):
+    self.reset()
+    self.speechLock = Semaphore(0)
+    self.sayAnimated("I'm fast forwarding to the end of the game.".format(self.name))
+    time.sleep(2)
+    self.sayAnimated("Congratulations {}, you finished the game and you did a good job.".format(self.name))
+    self.speechLock.acquire()
+    
+    while self.noAnswer or self.times == 3:
+        self.finish = None
             self.finishLock = Semaphore(0)
             self.setAudioContext('answer_finish')
             self.startListening()
             self.finishLock.acquire(timeout=5)
             self.stopListening()
-
+            
             if not self.finish:  # wait one more second after stopListening (if needed)
                 self.finishLock.acquire(timeout=1)
+    
+        # Respond and wait for that to finish
+        if self.finish == "finish":
+            self.sayAnimated("Thank you as well. I will call the caregiver to help us pack the game! What do you "
+                             "think we should do next?".format(self.name))
+                             self.noAnswer = False
+                             else:
+                                 if self.times == 2:
+                                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
+                                                      "next point")
+                                     self.times += 1
+                                         else:
+                                             self.sayAnimated(random.choice(self.responses))
+                                             self.times += 1
+                                         self.speechLock.acquire()
 
-            # Respond and wait for that to finish
-            if self.finish == "finish":
-                self.sayAnimated("Thank you as well. I will call the caregiver to help us pack the game! What do you "
-                                 "think we should do next?".format(self.name))
-                self.noAnswer = False
-            else:
-                if self.times == 2:
-                    self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
-                                     "next point")
-                    self.times += 1
-                else:
-                    self.sayAnimated(random.choice(self.responses))
-                    self.times += 1
-            self.speechLock.acquire()
-
-        # TODO add animation
-        # Display a gesture (replace <gestureID> with your gestureID)
+# TODO add animation
+# Display a gesture (replace <gestureID> with your gestureID)
 
 
 # Run the application
 sample = DialogFlowSampleApplication()
 sample.main()
 sample.stop()
-
