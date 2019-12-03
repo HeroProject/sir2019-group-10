@@ -123,17 +123,17 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.times += 1
             self.speechLock.acquire()
 
-        if self.noAnswer == False:
-            # Display a gesture (replace <gestureID> with your gestureID)
-            self.gestureLock = Semaphore(0)
-            self.doGesture('Excited_3') # TODO add animation
-            self.gestureLock.acquire()
-        else:
-            # Display a gesture (replace <gestureID> with your gestureID)
-            self.gestureLock = Semaphore(0)
-            self.doGesture('Angry_4') # TODO add animation
-            self.gestureLock.acquire()
-        time.sleep(1)
+            if self.noAnswer == False:
+                # Display a gesture (replace <gestureID> with your gestureID)
+                self.gestureLock = Semaphore(0)
+                self.doGesture('Excited_3') # TODO add animation
+                self.gestureLock.acquire()
+            else:
+                # Display a gesture (replace <gestureID> with your gestureID)
+                self.gestureLock = Semaphore(0)
+                self.doGesture('animations/Stand/Emotions/Negative/Angry_2') # TODO add animation
+                self.gestureLock.acquire()
+            time.sleep(1)
 
     # Do you want to play with me?
     def act2(self):
