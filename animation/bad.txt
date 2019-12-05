@@ -1,0 +1,9 @@
+animations/Stand/Gestures/No_1
+animations/Stand/Gestures/No_2
+animations/Stand/Gestures/No_3
+animations/Stand/Gestures/No_4
+animations/Stand/Gestures/No_5
+animations/Stand/Gestures/No_6
+animations/Stand/Gestures/No_7
+animations/Stand/Gestures/No_8
+animations/Stand/Gestures/No_9

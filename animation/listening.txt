@@ -1,0 +1,5 @@
+animations/Stand/BodyTalk/Listening/Listening_2
+animations/Stand/BodyTalk/Listening/ListeningLeft_1
+animations/Stand/BodyTalk/Listening/ListeningLeft_3
+animations/Stand/BodyTalk/Listening/ListeningRight_1
+animations/Stand/BodyTalk/Listening/ListeningRight_3

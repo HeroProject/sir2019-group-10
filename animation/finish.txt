@@ -1,0 +1,10 @@
+animations/Stand/Reactions/ShakeBody_1
+animations/Stand/Reactions/ShakeBody_2
+animations/Stand/Waiting/AirGuitar_1
+animations/Stand/Reactions/ShakeBody_1
+animations/Stand/Reactions/ShakeBody_2
+animations/Stand/Waiting/ShowMuscles_1
+animations/Stand/Waiting/ShowMuscles_2
+animations/Stand/Waiting/ShowMuscles_3
+animations/Stand/Waiting/ShowMuscles_4
+animations/Stand/Waiting/ShowMuscles_5
