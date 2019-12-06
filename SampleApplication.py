@@ -18,7 +18,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.noAnswer = True
         self.repeat = 0
         self.name = "Granny"
-        self.setEyeColour("red")
+        self.setEyeColour("blue")
 
         # responses variables
         self.responses = ["Sorry, I didn't catched that. Can you repeat it loud and clear for me?",
@@ -49,11 +49,11 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
 
 
         self.act1()
-        # self.act2()
-        # self.act3()
+        self.act2()
+        self.act3()
         # self.act4()
-        # self.act5()
-        # self.act6()
+        self.act5()
+        self.act6()
 
     def onRobotEvent(self, event):
         if event == 'LanguageChanged':
@@ -99,7 +99,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated('Good morning {}. How are you feeling today?'.format(self.name))
         self.speechLock.acquire()
-        self.animation("demo/hello")
+        # self.animation("demo/hello")
 
 
         while self.noAnswer and self.times != 3:
@@ -136,7 +136,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.animation(random.choice(self.bodygesture))
 
             self.speechLock.acquire()
-            time.sleep(1)
+            # time.sleep(1)
 
     # Do you want to play with me?
     def act2(self):
@@ -223,7 +223,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.speechLock.acquire()
 
         # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
+        # time.sleep(1)
 
     # Start the game
     def act4(self):
@@ -231,7 +231,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         # not sure what speechLock is
         self.reset()
         self.speechLock = Semaphore(0)
-        self.speechLock.acquire()
+
 
         while self.noAnswer and self.times != 3:
             self.yesno = None
@@ -247,6 +247,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             # Respond and wait for that to finish
             if self.yesno == "yes":
                 self.sayAnimated("Great, let's start, {}!".format(self.name))
+                # self.speechLock.acquire()
                 self.noAnswer = False
                 self.animation(random.choice(self.happy))
             elif self.yesno == "no": # i don't know answer
@@ -262,10 +263,10 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
                 self.animation(random.choice(self.bodygesture))
-            self.speechLock.acquire()
+            # self.speechLock.acquire()
 
         # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(1)
+        # time.sleep(1)
 
     # Moves, ordering, etc...
     def act5(self):
@@ -314,7 +315,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.repeat += 1
 
             elif self.gamemove == "wrong":
-                self.sayAnimated("That is not correct, {}. Try something else.".format(self.name))
+                self.sayAnimated("That is not correct, {}.".format(self.name))
                 self.animation(random.choice(self.bad))
                 if self.repeat == 2:
                     self.noAnswer = False
@@ -333,7 +334,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             time.sleep(1)
 
         # Display a gesture (replace <gestureID> with your gestureID)
-        time.sleep(2)
+        # time.sleep(2)
 
     # Congratulations, it's time to say goodbye.
     def act6(self):
@@ -342,10 +343,10 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated("I'm fast forwarding to the end of the game.".format(self.name))
         time.sleep(2)
         self.sayAnimated("Congratulations {}, you finished the game and you did a good job.".format(self.name))
-        self.animation(self.finish)
+        self.animation(random.choice(self.finish))
         self.speechLock.acquire()
 
-        while self.noAnswer or self.times != 3:
+        while self.noAnswer and self.times != 3:
             self.finish = None
             self.finishLock = Semaphore(0)
             self.setAudioContext('answer_finish')
@@ -380,7 +381,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.gestureLock = Semaphore(0)
         self.doGesture(gesture) # TODO add animation
         self.gestureLock.acquire()
-        time.sleep(2)
+        time.sleep(1)
 
     def populate(self, path):
         with open(path) as f:
