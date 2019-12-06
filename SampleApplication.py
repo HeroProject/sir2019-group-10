@@ -122,8 +122,8 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             elif self.mood == "bad":
                 self.sayAnimated("I am sorry to hear that you are {}. I will call the doctor.".format(self.mood))
                 self.animation(random.choice(self.bad))
-                time.sleep(5)
                 self.sayAnimated("The doctor is on it's way.")
+                self.animation(random.choice(self.bodygesture))
                 self.exit()
             else:
                 if self.times == 2:
@@ -144,6 +144,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated("Before we start the day, let's play a little game together.")
         self.speechLock.acquire()
+        self.animation(random.choice(self.bodygesture))
 
         while self.noAnswer and self.times != 3:
             self.play = None
@@ -188,6 +189,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated("What kind of game would you like to play?")
         self.speechLock.acquire()
+        self.animation(random.choice(self.thinking))
 
         while self.noAnswer and self.times != 3:
             self.game = None
@@ -217,6 +219,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 else:
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
+                self.animation(random.choice(self.bodygesture))
             self.speechLock.acquire()
 
         # Display a gesture (replace <gestureID> with your gestureID)
@@ -245,9 +248,11 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             if self.yesno == "yes":
                 self.sayAnimated("Great, let's start, {}!".format(self.name))
                 self.noAnswer = False
+                self.animation(random.choice(self.happy))
             elif self.yesno == "no": # i don't know answer
                 self.sayAnimated("We need to play it either way.")
                 self.noAnswer = False
+                self.animation(random.choice(self.bad))
             else:
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
@@ -256,6 +261,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 else:
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
+                self.animation(random.choice(self.bodygesture))
             self.speechLock.acquire()
 
         # Display a gesture (replace <gestureID> with your gestureID)
@@ -267,6 +273,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated("Remember {} the goal of the game is to place the numbers in the right order.".format(self.name))
         self.speechLock.acquire()
+        self.animation(random.choice(self.bodygesture))
 
         while self.noAnswer and self.times != 3:
 
@@ -293,12 +300,14 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.noAnswer = False
                 else:
                     self.repeat += 1
+                self.animation(random.choice(self.happy))
             elif self.gamemove == "uncertain":
                 self.sayAnimated("That is not completely correct, {}. Take a look at number {} and see if that is "
                                  "bigger with the number you have chosen.".format(self.name, np.random.randint(0, 100, 1)))
-                time.sleep(1)
+                self.animation(random.choice(self.thinking))
                 if self.number is not None:
                     self.sayAnimated("By the way, {}".format(str(self.userExperience[int(self.number)])))
+                    self.animation(random.choice(self.bodygesture))
                 if self.repeat == 2:
                     self.noAnswer = False
                 else:
@@ -306,7 +315,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
 
             elif self.gamemove == "wrong":
                 self.sayAnimated("That is not correct, {}. Try something else.".format(self.name))
-                # TODO add an encouragment here
+                self.animation(random.choice(self.bad))
                 if self.repeat == 2:
                     self.noAnswer = False
                 else:
@@ -319,6 +328,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 else:
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
+                self.animation(random.choice(self.bodygesture))
             self.speechLock.acquire()
             time.sleep(1)
 
@@ -332,6 +342,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.sayAnimated("I'm fast forwarding to the end of the game.".format(self.name))
         time.sleep(2)
         self.sayAnimated("Congratulations {}, you finished the game and you did a good job.".format(self.name))
+        self.animation(self.finish)
         self.speechLock.acquire()
 
         while self.noAnswer or self.times != 3:
