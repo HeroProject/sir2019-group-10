@@ -99,7 +99,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated('Good morning {}. How are you feeling today?'.format(self.name))
         self.speechLock.acquire()
-        # self.animation("demo/hello")
+        self.animation(random.choice(self.bodygesture))
 
 
         while self.noAnswer and self.times != 3:
