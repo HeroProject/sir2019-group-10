@@ -7,6 +7,7 @@ import sys
 
 class DialogFlowSampleApplication(Base.AbstractApplication):
 
+        # NAO variable resets
     def reset(self):
         self.times = 0
         self.noAnswer = True
@@ -14,23 +15,28 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
 
     def main(self):
 
+        # -- Initialization --
         # in-game variables
         self.noAnswer = True
         self.repeat = 0
-        self.name = "Granny"
-        self.setEyeColour("blue")
+        self.name = "Granny" # The name of our patient
+        self.setEyeColour("blue") # set the Nao's eyes to blue
 
-        # responses variables
+        # responses variables when NAO doesn't recognize the answer
         self.responses = ["Sorry, I didn't catched that. Can you repeat it loud and clear for me?",
                           "I think I'm getting a bit old. Could you repeat what you said?",
                           "Sorry, I didn't heard you well. Please repeat it one more time?",
                           "I'm having trouble hearing you. Can you say it one more time?",
                           "Sorry, I wasn't paying attention. Can you repeat it?"]
 
+        # NAO stores information about the patient. This section is the starting point for such thing, but future
+        # improvements should be made such as storing the information into a database, categorizing them based on the
+        # type of information (good/bad etc)..
         self.userExperience = {22: "On twenty two of July is your birthday!",
                                64: "On your next birthday, you will be 18 years old with 46 years of experience!"
                                }
 
+        # gesture location
         self.bodygesture = self.populate("animation/bodygesture.txt")
         self.finish = self.populate("animation/finish.txt")
         self.happy = self.populate("animation/happy.txt")
@@ -47,13 +53,16 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.setDialogflowKey('agentsmith-ljpfky-b35f1421d237.json')
         self.setDialogflowAgent('agentsmith-ljpfky')
 
+        # Case scenario as described in the Design Template. In this example, the patient will play a SKT test in order
+        # to analyze the cognitive performances of the patient.
 
-        self.act1()
-        self.act2()
-        self.act3()
-        # self.act4()
-        self.act5()
-        self.act6()
+        # -- Main --
+        self.act1()  # NAO Wakes up
+        self.act2()  # NAO invites the patient for a game
+        self.act3()  # Choosing the game
+        self.act4()  # Confirmation of the game
+        self.act5()  # Game start & play
+        self.act6()  # Game finished, do another activity...
 
     def onRobotEvent(self, event):
         if event == 'LanguageChanged':
@@ -77,7 +86,6 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.yesno = args[0]
             self.yesnoLock.release()
         elif intentName == 'answer_gamemove' and len(args) > 0:
-            # TODO check here if the args is getting more variables
             self.gamemove = args[0]
             if len(args) >= 2:
                 self.number = args[1]
@@ -88,7 +96,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         elif intentName == 'answer_finish' and len(args) > 0:
             self.finish = args[0]
             self.finishLock.release()
-            # TODO add all instances here
+
 
     def exit(self):
         sys.exit('Emergency exit')
@@ -99,7 +107,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
         self.speechLock = Semaphore(0)
         self.sayAnimated('Good morning {}. How are you feeling today?'.format(self.name))
         self.speechLock.acquire()
-        self.animation(random.choice(self.bodygesture))
+        self.animation(random.choice(self.bodygesture))  # performs a random animation from the given list
 
 
         while self.noAnswer and self.times != 3:
@@ -115,17 +123,18 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.moodLock.acquire(timeout=1)
 
             # Respond and wait for that to finish
-            if self.mood == "good":
+            # multiple answers are detected, based on the Interaction Diagram created.
+            if self.mood == "good":  # NAO detects positive answer, will proceed to the next phase
                 self.sayAnimated("I am happy to hear that your are doing {}".format(self.mood))
                 self.noAnswer = False
-                self.animation(random.choice(self.happy))
-            elif self.mood == "bad":
+                self.animation(random.choice(self.happy))  # performs a random animation from the given list
+            elif self.mood == "bad":  # NAO detects bad mood, will alert the caregiver
                 self.sayAnimated("I am sorry to hear that you are {}. I will call the doctor.".format(self.mood))
                 self.animation(random.choice(self.bad))
                 self.sayAnimated("The doctor is on it's way.")
-                self.animation(random.choice(self.bodygesture))
+                self.animation(random.choice(self.bodygesture))  # performs a random animation from the given list
                 self.exit()
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -133,7 +142,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 else:
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
-                self.animation(random.choice(self.bodygesture))
+                self.animation(random.choice(self.bodygesture))  # performs a random animation from the given list
 
             self.speechLock.acquire()
             # time.sleep(1)
@@ -158,16 +167,16 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.playLock.acquire(timeout=1)
 
             # Respond and wait for that to finish
-            if self.play == "yes":
+            if self.play == "yes":  # NAO detects positive answer, will proceed to the next phase
                 self.sayAnimated("I like your enthusiasm, {}".format(self.name))
                 self.noAnswer = False
                 self.animation(random.choice(self.happy))
-            elif self.play == "no":
+            elif self.play == "no":  # NAO detects answer
                 self.sayAnimated("We don't want to miss this practice session, {}. This will help you. "
                                  "Let's play it!".format(self.name))
                 self.noAnswer = False
                 self.animation(random.choice(self.bad))
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -211,7 +220,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.sayAnimated("I believe last time we played Sudoku, how about playing the numbers game?")
                 self.noAnswer = False
                 self.animation(random.choice(self.bad))
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -222,13 +231,9 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.animation(random.choice(self.bodygesture))
             self.speechLock.acquire()
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        # time.sleep(1)
 
     # Start the game
     def act4(self):
-        # TODO add a listener here so we can pick the yes
-        # not sure what speechLock is
         self.reset()
         self.speechLock = Semaphore(0)
 
@@ -254,7 +259,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.sayAnimated("We need to play it either way.")
                 self.noAnswer = False
                 self.animation(random.choice(self.bad))
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -263,13 +268,13 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.sayAnimated(random.choice(self.responses))
                     self.times += 1
                 self.animation(random.choice(self.bodygesture))
-            # self.speechLock.acquire()
-
-        # Display a gesture (replace <gestureID> with your gestureID)
-        # time.sleep(1)
+            self.speechLock.acquire()
 
     # Moves, ordering, etc...
     def act5(self):
+        # In act5, the NAO will listen to 2 different type of answers from the patient simultaneously. One is the
+        # answer regarding the game (if the patient made a correct move or not) and the other one is the user experience
+        # where the NAO tries to identify previous experiences and add them into the discussion.
         self.reset()
         self.speechLock = Semaphore(0)
         self.sayAnimated("Remember {} the goal of the game is to place the numbers in the right order.".format(self.name))
@@ -321,7 +326,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.noAnswer = False
                 else:
                     self.repeat += 1
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -333,8 +338,6 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
             self.speechLock.acquire()
             time.sleep(1)
 
-        # Display a gesture (replace <gestureID> with your gestureID)
-        # time.sleep(2)
 
     # Congratulations, it's time to say goodbye.
     def act6(self):
@@ -362,7 +365,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.sayAnimated("Thank you as well. I will call the caregiver to help us pack the game! What do you "
                                  "think we should do next?".format(self.name))
                 self.noAnswer = False
-            else:
+            else:  # NAO will proceed at the next step after 2 failed attempts.
                 if self.times == 2:
                     self.sayAnimated("Even after two tries, I still didn't figured it out. I guess we will go to the"
                                      "next point")
@@ -372,14 +375,12 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                     self.times += 1
             self.speechLock.acquire()
 
-        # TODO add animation
-        # Display a gesture (replace <gestureID> with your gestureID)
 
     def animation(self, gesture):
 
         # Display a gesture (replace <gestureID> with your gestureID)
         self.gestureLock = Semaphore(0)
-        self.doGesture(gesture) # TODO add animation
+        self.doGesture(gesture)
         self.gestureLock.acquire()
         time.sleep(1)
 
