@@ -256,7 +256,7 @@ class DialogFlowSampleApplication(Base.AbstractApplication):
                 self.noAnswer = False
                 self.animation(random.choice(self.happy))
             elif self.yesno == "no": # i don't know answer
-                self.sayAnimated("We need to play it either way.")
+                self.sayAnimated("I'm sorry to hear. Do you want to play another game?")
                 self.noAnswer = False
                 self.animation(random.choice(self.bad))
             else:  # NAO will proceed at the next step after 2 failed attempts.
